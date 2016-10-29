@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "afhacker Dashboard", "afhac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "afhacker Dashboard Form", "afhacker Dashboard Form\afhacker Dashboard Form.csproj", "{C99CA8C5-94E4-4F11-9012-8260DD1941D3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sorting Form", "Sorting Form\Sorting Form.csproj", "{A660791B-4063-4A07-8725-6913C597A554}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{C99CA8C5-94E4-4F11-9012-8260DD1941D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C99CA8C5-94E4-4F11-9012-8260DD1941D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C99CA8C5-94E4-4F11-9012-8260DD1941D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A660791B-4063-4A07-8725-6913C597A554}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A660791B-4063-4A07-8725-6913C597A554}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A660791B-4063-4A07-8725-6913C597A554}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A660791B-4063-4A07-8725-6913C597A554}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Timers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 
 namespace cAlgo
@@ -54,7 +55,21 @@ namespace cAlgo
         private MetroTextBox symbolTextBox;
         private MetroButton updateButton;
         private MetroButton symbolsButton;
+        private MetroButton sortSettingsButton;
         private MetroButton deleteSymbolsButton;
+
+        // Sort settings form controls
+        private MetroLabel correlationGridLabel;
+        private MetroLabel trendGridLabel;
+        private MetroLabel volatilityGridLabel;
+        private MetroComboBox correlationColumnsComboBox;
+        private MetroComboBox crrelationSortDirectionComboBox;
+        private MetroComboBox volatilityColumnComboBox;
+        private MetroComboBox volatilitySortDirectionComboBox;
+        private MetroComboBox trendColumnsComboBox;
+        private MetroComboBox trendSortDirectionComboBox;
+        private MetroButton sortSettingOkButton;
+        private MetroForm sortSettingsForm;
 
 
         // Collections
@@ -66,10 +81,19 @@ namespace cAlgo
 
         private System.Timers.Timer checkFormTimer;
 
+        private int correlationGridSortColumnIndex = 0;
+        private ListSortDirection correlationGridSortDirection = ListSortDirection.Ascending;
+        private int volatilityGridSortColumnIndex = 0;
+        private ListSortDirection volatilityGridSortDirection = ListSortDirection.Ascending;
+        private int trendGridSortColumnIndex = 0;
+        private ListSortDirection trendGridSortDirection = ListSortDirection.Ascending;
 
         protected override void OnStart()
         {
-            string[] splittedSymbolsString = defaultSymbolsString.Split(new char[] { ' ' });
+            string[] splittedSymbolsString = defaultSymbolsString.Split(new char[] 
+            {
+                ' '
+            });
             allSymbols.AddRange(splittedSymbolsString);
 
             FillCurrencies();
@@ -549,15 +573,22 @@ namespace cAlgo
             symbolsButton.Name = "symbolsButton";
             symbolsButton.Text = "Symbols";
             symbolsButton.Size = new Size(75, 23);
-            symbolsButton.Location = new Point(270, 360);
+            symbolsButton.Location = new Point(215, 360);
             symbolsButton.Click += new EventHandler(SymbolsClicked);
 
             updateButton = new MetroButton();
             updateButton.Name = "updateButton";
             updateButton.Text = "Update";
             updateButton.Size = new Size(75, 23);
-            updateButton.Location = new Point(370, 360);
+            updateButton.Location = new Point(315, 360);
             updateButton.Click += new EventHandler(UpdateClicked);
+
+            sortSettingsButton = new MetroButton();
+            sortSettingsButton.Name = "sortSettingsButton";
+            sortSettingsButton.Text = "Sort Settings";
+            sortSettingsButton.Size = new Size(100, 23);
+            sortSettingsButton.Location = new Point(415, 360);
+            sortSettingsButton.Click += new EventHandler(SortSettingsClicked);
 
             // Initializing MetroGrid
 
@@ -723,7 +754,7 @@ namespace cAlgo
 
 
             // Adding Process
-            startTab.Controls.AddRange(new Control[]
+            startTab.Controls.AddRange(new Control[] 
             {
                 labelStartWelcome,
                 labelStartSeriesTF,
@@ -759,12 +790,13 @@ namespace cAlgo
                 macdSignalPeriods,
                 updateMinutes,
                 symbolsButton,
-                updateButton
+                updateButton,
+                sortSettingsButton
 
             });
 
 
-            strongWeakTab.Controls.AddRange(new Control[]
+            strongWeakTab.Controls.AddRange(new Control[] 
             {
                 labelCurrencies,
                 labelPairs,
@@ -773,7 +805,7 @@ namespace cAlgo
                 dailyFXLink
             });
 
-            correlationTab.Controls.AddRange(new Control[]
+            correlationTab.Controls.AddRange(new Control[] 
             {
                 labelCorrelationSelectSymbol,
                 comboBoxCorrelationSymbols,
@@ -782,17 +814,17 @@ namespace cAlgo
                 investopediaLink
             });
 
-            volatilityTab.Controls.AddRange(new Control[]
+            volatilityTab.Controls.AddRange(new Control[] 
             {
                 volatilityGrid
             });
 
-            trendTab.Controls.AddRange(new Control[]
+            trendTab.Controls.AddRange(new Control[] 
             {
                 trendGrid
             });
 
-            aboutTab.Controls.AddRange(new Control[]
+            aboutTab.Controls.AddRange(new Control[] 
             {
                 picBox,
                 labelAboutDeveloper,
@@ -810,7 +842,7 @@ namespace cAlgo
                 ctdnLink
             });
 
-            Tabs.TabPages.AddRange(new TabPage[]
+            Tabs.TabPages.AddRange(new TabPage[] 
             {
                 startTab,
                 strongWeakTab,
@@ -826,7 +858,6 @@ namespace cAlgo
 
             Application.Run(DashboardForm);
         }
-
 
         private void SymbolsFormInitializer()
         {
@@ -894,7 +925,7 @@ namespace cAlgo
             applyButton.Click += new EventHandler(ApplySymbolsChange);
 
 
-            SymbolsForm.Controls.AddRange(new Control[]
+            SymbolsForm.Controls.AddRange(new Control[] 
             {
                 symbolTextBox,
                 addSymbolButton,
@@ -913,6 +944,209 @@ namespace cAlgo
 
             //Application.Run(SymbolsForm);
             SymbolsForm.ShowDialog(DashboardForm);
+        }
+
+        private void SortSettingsFormInitializer()
+        {
+            sortSettingsForm = new MetroForm();
+            correlationGridLabel = new MetroLabel();
+            trendGridLabel = new MetroLabel();
+            volatilityGridLabel = new MetroLabel();
+            correlationColumnsComboBox = new MetroComboBox();
+            crrelationSortDirectionComboBox = new MetroComboBox();
+            volatilityColumnComboBox = new MetroComboBox();
+            volatilitySortDirectionComboBox = new MetroComboBox();
+            trendColumnsComboBox = new MetroComboBox();
+            trendSortDirectionComboBox = new MetroComboBox();
+            sortSettingOkButton = new MetroButton();
+            sortSettingsForm.SuspendLayout();
+            // 
+            // correlationGridLabel
+            // 
+            correlationGridLabel.AutoSize = true;
+            correlationGridLabel.Location = new Point(23, 77);
+            correlationGridLabel.Name = "correlationGridLabel";
+            correlationGridLabel.Size = new Size(110, 20);
+            correlationGridLabel.TabIndex = 0;
+            correlationGridLabel.Text = "Correlation Grid:";
+            correlationGridLabel.Theme = MetroFramework.MetroThemeStyle.Dark;
+            // 
+            // trendGridLabel
+            // 
+            trendGridLabel.AutoSize = true;
+            trendGridLabel.Location = new Point(23, 176);
+            trendGridLabel.Name = "trendGridLabel";
+            trendGridLabel.Size = new Size(77, 20);
+            trendGridLabel.TabIndex = 1;
+            trendGridLabel.Text = "Trend Grid:";
+            trendGridLabel.Theme = MetroFramework.MetroThemeStyle.Dark;
+            // 
+            // volatilityGridLabel
+            // 
+            volatilityGridLabel.AutoSize = true;
+            volatilityGridLabel.Location = new Point(23, 127);
+            volatilityGridLabel.Name = "volatilityGridLabel";
+            volatilityGridLabel.Size = new Size(92, 20);
+            volatilityGridLabel.TabIndex = 2;
+            volatilityGridLabel.Text = "Volatility Grid:";
+            volatilityGridLabel.Theme = MetroFramework.MetroThemeStyle.Dark;
+            // 
+            // correlationColumnsComboBox
+            // 
+            correlationColumnsComboBox.FormattingEnabled = true;
+            correlationColumnsComboBox.ItemHeight = 24;
+            correlationColumnsComboBox.Items.AddRange(new object[] 
+            {
+                "Symbol",
+                "Correlation(%)"
+            });
+            correlationColumnsComboBox.Location = new Point(164, 67);
+            correlationColumnsComboBox.Name = "correlationColumnsComboBox";
+            correlationColumnsComboBox.Size = new Size(121, 30);
+            correlationColumnsComboBox.TabIndex = 3;
+            correlationColumnsComboBox.UseSelectable = true;
+            correlationColumnsComboBox.SelectedIndex = correlationGridSortColumnIndex;
+            // 
+            // crrelationSortDirectionComboBox
+            // 
+            crrelationSortDirectionComboBox.FormattingEnabled = true;
+            crrelationSortDirectionComboBox.ItemHeight = 24;
+            crrelationSortDirectionComboBox.Items.AddRange(new object[] 
+            {
+                "Ascending",
+                "Descending"
+            });
+            crrelationSortDirectionComboBox.Location = new Point(307, 67);
+            crrelationSortDirectionComboBox.Name = "crrelationSortDirectionComboBox";
+            crrelationSortDirectionComboBox.Size = new Size(121, 30);
+            crrelationSortDirectionComboBox.TabIndex = 4;
+            crrelationSortDirectionComboBox.UseSelectable = true;
+
+            if (correlationGridSortDirection == ListSortDirection.Ascending)
+                crrelationSortDirectionComboBox.SelectedIndex = 0;
+            else
+                crrelationSortDirectionComboBox.SelectedIndex = 1;
+
+            // 
+            // volatilityColumnComboBox
+            // 
+            volatilityColumnComboBox.FormattingEnabled = true;
+            volatilityColumnComboBox.ItemHeight = 24;
+            volatilityColumnComboBox.Items.AddRange(new object[] 
+            {
+                "Symbol",
+                "SD(Pips)",
+                "ATR(Pips)",
+                "ABR(Pips)",
+                "Chaikin"
+            });
+            volatilityColumnComboBox.Location = new Point(164, 117);
+            volatilityColumnComboBox.Name = "volatilityColumnComboBox";
+            volatilityColumnComboBox.Size = new Size(121, 30);
+            volatilityColumnComboBox.TabIndex = 5;
+            volatilityColumnComboBox.UseSelectable = true;
+            volatilityColumnComboBox.SelectedIndex = volatilityGridSortColumnIndex;
+            // 
+            // volatilitySortDirectionComboBox
+            // 
+            volatilitySortDirectionComboBox.FormattingEnabled = true;
+            volatilitySortDirectionComboBox.ItemHeight = 24;
+            volatilitySortDirectionComboBox.Items.AddRange(new object[] 
+            {
+                "Ascending",
+                "Descending"
+            });
+            volatilitySortDirectionComboBox.Location = new Point(307, 117);
+            volatilitySortDirectionComboBox.Name = "volatilitySortDirectionComboBox";
+            volatilitySortDirectionComboBox.Size = new Size(121, 30);
+            volatilitySortDirectionComboBox.TabIndex = 6;
+            volatilitySortDirectionComboBox.UseSelectable = true;
+
+            if (volatilityGridSortDirection == ListSortDirection.Ascending)
+                volatilitySortDirectionComboBox.SelectedIndex = 0;
+            else
+                volatilitySortDirectionComboBox.SelectedIndex = 1;
+            // 
+            // trendColumnsComboBox
+            // 
+            trendColumnsComboBox.FormattingEnabled = true;
+            trendColumnsComboBox.ItemHeight = 24;
+            trendColumnsComboBox.Items.AddRange(new object[] 
+            {
+                "Symbol",
+                "MA",
+                "RSI",
+                "MACD",
+                "Trend"
+            });
+            trendColumnsComboBox.Location = new Point(164, 166);
+            trendColumnsComboBox.Name = "trendColumnsComboBox";
+            trendColumnsComboBox.Size = new Size(121, 30);
+            trendColumnsComboBox.TabIndex = 7;
+            trendColumnsComboBox.UseSelectable = true;
+            trendColumnsComboBox.SelectedIndex = trendGridSortColumnIndex;
+            // 
+            // trendSortDirectionComboBox
+            // 
+            trendSortDirectionComboBox.FormattingEnabled = true;
+            trendSortDirectionComboBox.ItemHeight = 24;
+            trendSortDirectionComboBox.Items.AddRange(new object[] 
+            {
+                "Ascending",
+                "Descending"
+            });
+            trendSortDirectionComboBox.Location = new Point(307, 166);
+            trendSortDirectionComboBox.Name = "trendSortDirectionComboBox";
+            trendSortDirectionComboBox.Size = new Size(121, 30);
+            trendSortDirectionComboBox.TabIndex = 8;
+            trendSortDirectionComboBox.UseSelectable = true;
+            if (trendGridSortDirection == ListSortDirection.Ascending)
+                trendSortDirectionComboBox.SelectedIndex = 0;
+            else
+                trendSortDirectionComboBox.SelectedIndex = 1;
+            // 
+            // sortSettingOkButton
+            // 
+            sortSettingOkButton.Location = new Point(179, 213);
+            sortSettingOkButton.Name = "sortSettingOkButton";
+            sortSettingOkButton.Size = new Size(75, 23);
+            sortSettingOkButton.TabIndex = 9;
+            sortSettingOkButton.Text = "Ok";
+            sortSettingOkButton.UseSelectable = true;
+            sortSettingOkButton.Click += new EventHandler(SortSettingOkButtonClicked);
+            // 
+            // SortForm
+            // 
+            sortSettingsForm.AutoScaleDimensions = new SizeF(8f, 16f);
+            sortSettingsForm.AutoScaleMode = AutoScaleMode.Font;
+            sortSettingsForm.ClientSize = new Size(445, 250);
+            sortSettingsForm.Controls.Add(sortSettingOkButton);
+            sortSettingsForm.Controls.Add(trendSortDirectionComboBox);
+            sortSettingsForm.Controls.Add(trendColumnsComboBox);
+            sortSettingsForm.Controls.Add(volatilitySortDirectionComboBox);
+            sortSettingsForm.Controls.Add(volatilityColumnComboBox);
+            sortSettingsForm.Controls.Add(crrelationSortDirectionComboBox);
+            sortSettingsForm.Controls.Add(correlationColumnsComboBox);
+            sortSettingsForm.Controls.Add(volatilityGridLabel);
+            sortSettingsForm.Controls.Add(trendGridLabel);
+            sortSettingsForm.Controls.Add(correlationGridLabel);
+            sortSettingsForm.MaximizeBox = false;
+            sortSettingsForm.MinimizeBox = false;
+            sortSettingsForm.Name = "sortSettingsForm";
+            sortSettingsForm.Resizable = false;
+            sortSettingsForm.ShowIcon = false;
+            sortSettingsForm.Text = "Sort Settings";
+            sortSettingsForm.Theme = MetroFramework.MetroThemeStyle.Dark;
+            sortSettingsForm.Style = MetroFramework.MetroColorStyle.Silver;
+            sortSettingsForm.FormClosed += new FormClosedEventHandler(SortSettingsFormClosed);
+            sortSettingsForm.Load += new EventHandler(SortSettingsFormLoad);
+            sortSettingsForm.StartPosition = FormStartPosition.CenterParent;
+            sortSettingsForm.ShowInTaskbar = false;
+
+            sortSettingsForm.ResumeLayout(false);
+            sortSettingsForm.PerformLayout();
+
+            sortSettingsForm.ShowDialog(DashboardForm);
         }
 
 
@@ -1084,9 +1318,12 @@ namespace cAlgo
                 double chaikinRounded = Math.Round(chaikin.Result.Last(1), 1);
 
                 volatilityGrid.Rows.Add(symCode, sdPips, atrPips, abrPips, chaikinRounded);
-                volatilityGrid.PerformLayout();
-
             }
+
+            volatilityGrid.Sort(volatilityGrid.Columns[volatilityGridSortColumnIndex], volatilityGridSortDirection);
+            volatilityGrid.PerformLayout();
+
+
         }
 
 
@@ -1153,6 +1390,7 @@ namespace cAlgo
                 correlationGrid.Rows.Add(item.Key, item.Value);
             }
 
+            correlationGrid.Sort(correlationGrid.Columns[correlationGridSortColumnIndex], correlationGridSortDirection);
             correlationGrid.PerformLayout();
             comboBoxCorrelationSymbols.Enabled = true;
         }
@@ -1229,9 +1467,10 @@ namespace cAlgo
                     trendResult = "Neutral";
 
                 trendGrid.Rows.Add(symCode, maResult, rsiResult, macdResult, trendResult);
-                trendGrid.PerformLayout();
-
             }
+
+            trendGrid.Sort(trendGrid.Columns[trendGridSortColumnIndex], trendGridSortDirection);
+            trendGrid.PerformLayout();
         }
 
         // Trend End
@@ -1324,7 +1563,6 @@ namespace cAlgo
             System.Diagnostics.Process.Start("https://www.dailyfx.com/forex/education/trading_tips/post_of_the_day/2011/06/15/How_to_Create_a_Trading_Edge_Know_the_Strong_and_the_Weak_Currencies.html");
         }
 
-
         private void OpencTDNLink(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start("http://ctdn.com/users/profile/afhacker");
@@ -1358,6 +1596,20 @@ namespace cAlgo
             DashboardForm.TopMost = true;
         }
 
+        private void SortSettingsFormLoad(object sender, EventArgs e)
+        {
+            Tabs.Enabled = false;
+            DashboardForm.TopMost = false;
+            sortSettingsForm.TopMost = true;
+        }
+
+        private void SortSettingsFormClosed(object sender, FormClosedEventArgs e)
+        {
+            Tabs.Enabled = true;
+            DashboardForm.TopMost = true;
+            Updater();
+        }
+
         private void comboBoxSymbolSelected(object sender, EventArgs e)
         {
             comboBoxCorrelationSymbols.Enabled = false;
@@ -1371,10 +1623,12 @@ namespace cAlgo
 
         private void SymbolsClicked(object sender, EventArgs e)
         {
-            Task showSymbolsForm = Task.Factory.StartNew(() =>
-            {
-                SymbolsFormInitializer();
-            });
+            Task showSymbolsForm = Task.Factory.StartNew(() => { SymbolsFormInitializer(); });
+        }
+
+        private void SortSettingsClicked(object sender, EventArgs e)
+        {
+            Task showSortSettingsForm = Task.Factory.StartNew(() => { SortSettingsFormInitializer(); });
         }
 
         private void AddSymbol(object sender, EventArgs e)
@@ -1425,6 +1679,30 @@ namespace cAlgo
 
             FillCurrencies();
             Updater();
+        }
+
+        private void SortSettingOkButtonClicked(object sender, EventArgs e)
+        {
+            correlationGridSortColumnIndex = correlationColumnsComboBox.SelectedIndex;
+            volatilityGridSortColumnIndex = volatilityColumnComboBox.SelectedIndex;
+            trendGridSortColumnIndex = trendColumnsComboBox.SelectedIndex;
+
+            if (crrelationSortDirectionComboBox.SelectedIndex == 0)
+                correlationGridSortDirection = ListSortDirection.Ascending;
+            else
+                correlationGridSortDirection = ListSortDirection.Descending;
+
+            if (volatilitySortDirectionComboBox.SelectedIndex == 0)
+                volatilityGridSortDirection = ListSortDirection.Ascending;
+            else
+                volatilityGridSortDirection = ListSortDirection.Descending;
+
+            if (trendSortDirectionComboBox.SelectedIndex == 0)
+                trendGridSortDirection = ListSortDirection.Ascending;
+            else
+                trendGridSortDirection = ListSortDirection.Descending;
+
+            sortSettingsForm.Close();
         }
 
 
